@@ -84,4 +84,4 @@ def process_file(file):
         w.write("\n".join([str(p) for p in prices]))
 
 
-process_file(open("test_data/test.jpg", "rb"))
+# process_file(open("test_data/test.jpg", "rb"))
