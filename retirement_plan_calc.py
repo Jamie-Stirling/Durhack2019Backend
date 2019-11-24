@@ -1,7 +1,5 @@
 import datetime
-import pandas as pd
 import numpy as np
-import scipy as sp
 
 
 # inflation = 1
@@ -59,27 +57,6 @@ def REAL_RATE_NEEDED(cash_flow, future_value):
             solution = 'none'
     return solution
 
-
-def recieve_data():
-    host = socket.gethostname()  # as both code is running on same pc
-    port = 5000  # socket server port number
-
-    client_socket = socket.socket()  # instantiate
-    client_socket.connect((host, port))  # connect to the server
-
-    # send message
-    data = client_socket.recv(1024).decode()  # receive response
-
-    print('Received from server: ' + data)  # show in terminal
-
-
-client_socket.close()  # close the connection
-# print (REAL_RATE_NEEDED([0,10,10,10], 31.2037))
-
-send_data()
-
-
-######################
 
 class User:
     def __init__(self, retireTarget, savingsTarget, timeToRetirement, cashFlow):
