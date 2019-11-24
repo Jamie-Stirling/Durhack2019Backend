@@ -50,6 +50,7 @@ def FV(cash_flow, inflation, nom_rate):
 def REAL_RATE_NEEDED(cash_flow, future_value):
     coeff = cash_flow
     coeff[-1] = coeff[-1] - future_value
+    solution = 0
     for i in np.roots(coeff):
         if (np.imag(i) < 0.00001) and (np.real(i) >= 0):
             solution = (np.real(i) - 1) * 100
@@ -69,7 +70,9 @@ class User:
 def handle_request(data):
     current_date = datetime.datetime.now()
 
-    time_to_retire = data["retireTargetAge"] - current_date.year + data["dob"]
+    time_to_retire = data["retireTargetAge"]
+
+    print(data, time_to_retire)
 
     def calc_cash_flow(t, max):
         if t < max / 2:
@@ -81,9 +84,9 @@ def handle_request(data):
 
     cash_flow = [0] + [calc_cash_flow(i, time_to_retire) for i in range(time_to_retire)]
 
-    user = User(data["retireTarget"], data["savingsTarget"], time_to_retire, cash_flow)
+    user = User(0, data["savingsTarget"], time_to_retire, cash_flow)
 
-    (total, passive_income, totals) = FV(user.cashFlow, 2.5, 7)
+    (total, passive_income, totals) = FV(user.cashFlow, 2.5, 2)
     rrr = REAL_RATE_NEEDED(user.cashFlow, 31.2038)
 
     data = {
@@ -92,8 +95,10 @@ def handle_request(data):
         "rrr": rrr
     }
 
+    return data
+# print (REAL_RATE_NEEDED(Mike.cashFlow, 31.2038))
+
 # Mike = USER(100,10,3,0)
 
 # print (FV(Mike.cashFlow, 1, 5))
 
-# print (REAL_RATE_NEEDED(Mike.cashFlow, 31.2038))

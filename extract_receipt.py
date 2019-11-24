@@ -12,10 +12,10 @@ def increase_range(bgr_uint8):
     return (flt * 255).astype(np.uint8)
 
 
-def extract_raw_text(file, blur):
-    byte = file.read()
+def extract_raw_text(body, blur):
+    buffer = np.frombuffer(body, dtype=np.uint8)
+    img = cv2.imdecode(buffer, flags=cv2.IMREAD_COLOR)
 
-    img = cv2.imdecode(np.fromstring(byte, dtype=np.uint8), flags=cv2.IMREAD_COLOR)
     height = img.shape[0]
     width = img.shape[1]
     img = cv2.resize(img, (900, int(900 * height / width)))
@@ -42,6 +42,7 @@ def extract_raw_text(file, blur):
 
 pattern = re.compile('.*([0-9]*\.[0-9][0-9])')
 number_pattern = re.compile("(.*?)( ?£?)([0-9]+\.[0-9][0-9])")
+
 
 def extract_amount_lines(raw_text):
     return [line for line in raw_text.split("\n") if pattern.match(line)]
@@ -74,14 +75,11 @@ def clean_amount_lines(amount_lines):
 
     return item_list, amount_list
 
-def process_file(file):
-    s = extract_raw_text(file, 0.3)
+
+def process_file(body):
+    s = extract_raw_text(body, 0.3)
     lines = extract_amount_lines(s)
     items, prices = clean_amount_lines(lines)
 
-    with open("out/0.jpg", "w") as w:
-        w.write("\n".join(items))
-        w.write("\n".join([str(p) for p in prices]))
-
-
+    return list(map(lambda x: {"name": x[0], "amount": x[1]}, zip(items, prices)))
 # process_file(open("test_data/test.jpg", "rb"))
